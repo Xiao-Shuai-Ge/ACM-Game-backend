@@ -1,30 +1,35 @@
 package grpc
 
 import (
-	"net"
-
 	"context"
+	"net"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	platformv1 "acmgame-backend/api/gen/go/platform/v1"
 	conf "acmgame-backend/internal/common/config"
-	platformgrpc "acmgame-backend/internal/platform/handler/grpc"
 )
+
+// ServiceRegister allows services to register themselves with the gRPC server
+type ServiceRegister func(*grpc.Server)
 
 type ServerParams struct {
 	fx.In
-	Logger  *zap.Logger
-	Config  *conf.Config
-	Handler *platformgrpc.PlatformHandler
+	Logger    *zap.Logger
+	Config    *conf.Config
+	Registers []ServiceRegister `group:"grpc_registers"`
 }
 
 func startGRPC(p ServerParams, lc fx.Lifecycle) {
 	srv := grpc.NewServer()
-	platformv1.RegisterPlatformServiceServer(srv, p.Handler)
+
+	// Register all injected services
+	for _, reg := range p.Registers {
+		reg(srv)
+	}
+
 	reflection.Register(srv)
 
 	lc.Append(fx.Hook{
