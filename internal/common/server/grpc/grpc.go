@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	conf "acmgame-backend/internal/common/config"
+	"acmgame-backend/internal/common/server/grpc/interceptors"
 )
 
 // ServiceRegister allows services to register themselves with the gRPC server
@@ -23,7 +24,14 @@ type ServerParams struct {
 }
 
 func startGRPC(p ServerParams, lc fx.Lifecycle) {
-	srv := grpc.NewServer()
+	opts := []grpc.ServerOption{
+		grpc.ChainUnaryInterceptor(
+			interceptors.UnaryRecovery(p.Logger),
+			interceptors.UnaryLogger(p.Logger),
+		),
+	}
+
+	srv := grpc.NewServer(opts...)
 
 	// Register all injected services
 	for _, reg := range p.Registers {

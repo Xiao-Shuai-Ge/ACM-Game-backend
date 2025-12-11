@@ -1,14 +1,24 @@
 package service
 
-import "go.uber.org/fx"
+import (
+	"acmgame-backend/internal/platform/repository"
 
-type Service struct{}
+	"go.uber.org/fx"
+)
 
-func NewService() *Service { return &Service{} }
+type Service struct {
+	userRepo repository.UserRepository
+}
+
+func NewService(userRepo repository.UserRepository) *Service {
+	return &Service{
+		userRepo: userRepo,
+	}
+}
 
 func (s *Service) Ping() string { return "pong" }
 
 var Module = fx.Options(
-    fx.Provide(NewService),
+	fx.Provide(repository.NewUserRepository),
+	fx.Provide(NewService),
 )
-

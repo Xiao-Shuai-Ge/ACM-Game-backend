@@ -6,6 +6,7 @@ import (
 	"go.uber.org/fx"
 
 	"acmgame-backend/internal/common/config"
+	"acmgame-backend/internal/common/db"
 	"acmgame-backend/internal/common/log"
 	grpcserver "acmgame-backend/internal/common/server/grpc"
 	httpserver "acmgame-backend/internal/common/server/http"
@@ -17,6 +18,7 @@ func main() {
 	app := fx.New(
 		config.Module,
 		log.Module,
+		db.Module,
 		platformsrv.Module,
 		platformgrpc.Module,
 		grpcserver.Module,

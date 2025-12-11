@@ -18,8 +18,13 @@ type ServerConfig struct {
 	} `mapstructure:"grpc"`
 }
 
+type MySQLConfig struct {
+	DSN string `mapstructure:"dsn"`
+}
+
 type Config struct {
 	Server ServerConfig `mapstructure:"server"`
+	MySQL  MySQLConfig  `mapstructure:"mysql"`
 }
 
 func load() (*Config, error) {
