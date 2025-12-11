@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package acmgame.platform.v1;
+
+option go_package = "acmgame-backend/api/gen/go/platform/v1;platformv1";
+
+import "google/api/annotations.proto";
+
+service PlatformService {
+  rpc Ping(PingRequest) returns (PingResponse) {
+    option (google.api.http) = { get: "/platform/v1/ping" };
+  }
+}
+
+message PingRequest {}
+
+message PingResponse { string message = 1; }
+
